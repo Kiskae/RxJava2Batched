@@ -98,7 +98,10 @@ public class FlowableBatched {
         return create(LACK_OF_STATE, new BatchGenerator<T, Object>() {
             @Override
             public void generate(Object state, long requested, BatchResource<T, Object> output) throws Exception {
-                output.setSource(generator.apply(requested));
+                output.setSource(ObjectHelper.requireNonNull(
+                    generator.apply(requested),
+                    "Publisher returned by generator is null"
+                ));
             }
         }, Functions.emptyConsumer());
     }
