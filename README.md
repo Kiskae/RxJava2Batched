@@ -38,12 +38,14 @@ Paginated by token:
             ConnectableFlowable<PageWithData> data = getPage(token.isEmpty() ? null : token);
             
             // Connecting to the publisher begins the stream
-            output.setSource(data.flatMapIterable(page -> page.items).autoConnect());
+            output.setSource(data.autoConnect().flatMapIterable(page -> page.items));
             
             // Lets presume a result with no items indicates the end.
-            output.setState(data.lastElement()
-                  .map(page -> page.nextToken) // Extract token
-                  .filter(token -> !token.isEmpty()); // Lack of a next token means end of stream
+            output.setState(
+                    data.lastElement()
+                        .map(page -> page.nextToken) // Extract token
+                        .filter(token -> !token.isEmpty()) // Lack of a next token means end of stream
+            ); 
         });
     }
     
